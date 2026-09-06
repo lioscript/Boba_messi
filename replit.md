@@ -11,6 +11,7 @@ Telegram-магазин для навігації по продуктах OXIDE,
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - Required env: `DATABASE_URL` — Postgres connection string
 - Telegram is connected through the Replit Telegram connector. The bot starts polling automatically with the API server.
+- Inline navigation uses Telegram callback queries; set `TELEGRAM_CUSTOM_EMOJI_IDS` to a JSON map of custom emoji IDs for branded message entities.
 
 ## Stack
 

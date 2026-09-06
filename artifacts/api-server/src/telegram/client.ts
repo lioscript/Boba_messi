@@ -24,10 +24,32 @@ export type TelegramMessage = {
   date: number;
 };
 
+export type TelegramMessageEntity = {
+  type: string;
+  offset: number;
+  length: number;
+  custom_emoji_id?: string;
+};
+
 export type TelegramUpdate = {
   update_id: number;
   message?: TelegramMessage;
+  callback_query?: TelegramCallbackQuery;
 };
+
+export type TelegramCallbackQuery = {
+  id: string;
+  data?: string;
+  from: TelegramUser;
+  message?: TelegramMessage;
+};
+
+export type InlineButton = {
+  text: string;
+  callback_data: string;
+};
+
+export type InlineKeyboard = InlineButton[][];
 
 export async function telegramRequest<T>(
   method: string,
@@ -50,17 +72,41 @@ export async function telegramRequest<T>(
 export async function sendTelegramMessage(
   chatId: number,
   text: string,
-  keyboard: string[][],
+  keyboard: InlineKeyboard,
+  entities?: TelegramMessageEntity[],
 ): Promise<TelegramMessage> {
   return telegramRequest<TelegramMessage>("sendMessage", {
     chat_id: chatId,
     text,
+    ...(entities?.length ? { entities } : {}),
     reply_markup: {
-      keyboard: keyboard.map((row) =>
-        row.map((button) => ({ text: button })),
-      ),
-      resize_keyboard: true,
-      is_persistent: true,
+      inline_keyboard: keyboard,
     },
+  });
+}
+
+export async function editTelegramMessage(
+  chatId: number,
+  messageId: number,
+  text: string,
+  keyboard: InlineKeyboard,
+  entities?: TelegramMessageEntity[],
+): Promise<TelegramMessage> {
+  return telegramRequest<TelegramMessage>("editMessageText", {
+    chat_id: chatId,
+    message_id: messageId,
+    text,
+    ...(entities?.length ? { entities } : {}),
+    reply_markup: {
+      inline_keyboard: keyboard,
+    },
+  });
+}
+
+export async function answerTelegramCallback(
+  callbackQueryId: string,
+): Promise<boolean> {
+  return telegramRequest<boolean>("answerCallbackQuery", {
+    callback_query_id: callbackQueryId,
   });
 }
