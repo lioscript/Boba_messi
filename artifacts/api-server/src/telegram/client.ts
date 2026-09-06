@@ -1,6 +1,7 @@
 import { ReplitConnectors } from "@replit/connectors-sdk";
 
 const connectors = new ReplitConnectors();
+const telegramBotToken = process.env["TELEGRAM_BOT_TOKEN"]?.trim();
 
 type TelegramEnvelope<T> = {
   ok: boolean;
@@ -59,11 +60,14 @@ export async function telegramRequest<T>(
   method: string,
   body?: Record<string, unknown>,
 ): Promise<T> {
-  const response = await connectors.proxy("telegram", `/${method}`, {
+  const request = {
     method: body ? "POST" : "GET",
     headers: body ? { "Content-Type": "application/json" } : undefined,
     body: body ? JSON.stringify(body) : undefined,
-  });
+  };
+  const response = telegramBotToken
+    ? await fetch(`https://api.telegram.org/bot${telegramBotToken}/${method}`, request)
+    : await connectors.proxy("telegram", `/${method}`, request);
   const payload = (await response.json()) as TelegramEnvelope<T>;
   if (!response.ok || !payload.ok || payload.result === undefined) {
     throw new Error(

@@ -1,1 +1,2 @@
 - [Telegram inline keyboards](telegram-inline-keyboards.md) — send the first inline keyboard with the initial message instead of editing after ReplyKeyboardRemove.
+- [Telegram credentials](telegram-credentials.md) — prefer the Replit secret fallback when the connector's API-key setup cannot be edited.
