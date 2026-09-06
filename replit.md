@@ -1,6 +1,6 @@
-# [Project name]
+# OXIDE Store Telegram Bot
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Telegram-магазин для навігації по продуктах OXIDE, профілю користувача та майбутньої видачі ключів.
 
 ## Run & Operate
 
@@ -10,6 +10,7 @@ _Replace the heading above with the project's name, and this line with one sente
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - Required env: `DATABASE_URL` — Postgres connection string
+- Telegram is connected through the Replit Telegram connector. The bot starts polling automatically with the API server.
 
 ## Stack
 
@@ -22,19 +23,26 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/api-server/src/telegram/bot.ts` — Telegram polling loop and menu routing
+- `artifacts/api-server/src/telegram/client.ts` — authenticated Telegram API client
+- `artifacts/api-server/src/telegram/i18n.ts` — Russian and English copy
+- `artifacts/api-server/src/telegram/store.ts` — user profile and purchase history persistence
+- `lib/db/src/schema/index.ts` — PostgreSQL tables for Telegram users and purchases
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Telegram access uses the Replit connector SDK rather than a raw bot token in application code.
+- Long polling is used for the initial MVP so the bot works without a public webhook URL.
+- Product plans are intentionally visible but unavailable until inventory and payment flows are configured.
+- User language, registration date, balance, and purchase history are stored in PostgreSQL.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+The bot lets customers select Russian or English, browse OXIDE for iOS, view an account profile, and open an empty purchase-history screen. Reviews, referrals, support, Android, and product plans are temporarily unavailable.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- The interface should follow the provided green Telegram storefront references and use decorative premium-style emoji/sticker treatment.
 
 ## Gotchas
 

@@ -1,20 +1,29 @@
-// Export your models here. Add one export per file
-// export * from "./posts";
-//
-// Each model/table should ideally be split into different files.
-// Each model/table should define a Drizzle table, insert schema, and types:
-//
-//   import { pgTable, text, serial } from "drizzle-orm/pg-core";
-//   import { createInsertSchema } from "drizzle-zod";
-//   import { z } from "zod/v4";
-//
-//   export const postsTable = pgTable("posts", {
-//     id: serial("id").primaryKey(),
-//     title: text("title").notNull(),
-//   });
-//
-//   export const insertPostSchema = createInsertSchema(postsTable).omit({ id: true });
-//   export type InsertPost = z.infer<typeof insertPostSchema>;
-//   export type Post = typeof postsTable.$inferSelect;
+import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
-export {}
+export const telegramUsers = pgTable("telegram_users", {
+  id: serial("id").primaryKey(),
+  telegramId: text("telegram_id").notNull().unique(),
+  username: text("username"),
+  firstName: text("first_name").notNull(),
+  language: text("language").notNull().default("ru"),
+  registeredAt: timestamp("registered_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  balanceRoubles: integer("balance_roubles").notNull().default(0),
+  purchasesCount: integer("purchases_count").notNull().default(0),
+});
+
+export const telegramPurchases = pgTable("telegram_purchases", {
+  id: serial("id").primaryKey(),
+  telegramId: text("telegram_id").notNull(),
+  product: text("product").notNull(),
+  platform: text("platform").notNull(),
+  plan: text("plan").notNull(),
+  keyValue: text("key_value"),
+  purchasedAt: timestamp("purchased_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type TelegramUser = typeof telegramUsers.$inferSelect;
+export type TelegramPurchase = typeof telegramPurchases.$inferSelect;
