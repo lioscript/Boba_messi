@@ -3,6 +3,7 @@ import {
   answerTelegramCallback,
   editTelegramMessage,
   sendTelegramMessage,
+  sendTelegramMessageRemovingLegacyKeyboard,
   telegramRequest,
   type InlineKeyboard,
   type TelegramCallbackQuery,
@@ -37,6 +38,10 @@ let offset = 0;
 
 function button(text: string, callbackData: string) {
   return { text, callback_data: callbackData };
+}
+
+function copyButton(text: string, value: string) {
+  return { text, copy_text: { text: value } };
 }
 
 function languageKeyboard(): InlineKeyboard {
@@ -156,11 +161,15 @@ async function sendStart(message: TelegramMessage): Promise<void> {
     username: from.username,
     firstName: from.first_name,
   });
-  await sendRichMessage(
-    message.chat.id,
+  const richText = withCustomEmoji(
     "🌿 Добро пожаловать в OXIDE STORE!\n\nChoose your language / Выберите язык",
-    languageKeyboard(),
     "brand",
+  );
+  await sendTelegramMessageRemovingLegacyKeyboard(
+    message.chat.id,
+    richText.text,
+    languageKeyboard(),
+    richText.entities,
   );
 }
 
@@ -311,10 +320,16 @@ async function handleMessage(message: TelegramMessage): Promise<void> {
     .map((entity) => entity.custom_emoji_id)
     .filter((customEmojiId): customEmojiId is string => Boolean(customEmojiId));
   if (customEmojiIds.length > 0) {
+    const copyKeyboard: InlineKeyboard = customEmojiIds.map((customEmojiId, index) => [
+      copyButton(`📋  Скопіювати ${index + 1}`, customEmojiId),
+    ]);
+    copyKeyboard.push([button("↩️  Назад", ACTION.main)]);
     await sendTelegramMessage(
       message.chat.id,
-      `Custom Emoji ID:\n${customEmojiIds.join("\n")}\n\nСкопіюй потрібний ID і надішли його мені.`,
-      [[button("↩️  Назад", ACTION.main)]],
+      `Custom Emoji ID:\n${customEmojiIds
+        .map((customEmojiId, index) => `${index + 1}. ${customEmojiId}`)
+        .join("\n")}\n\nНатисни кнопку під потрібним ID, щоб скопіювати його.`,
+      copyKeyboard,
     );
     return;
   }

@@ -47,7 +47,10 @@ export type TelegramCallbackQuery = {
 
 export type InlineButton = {
   text: string;
-  callback_data: string;
+  callback_data?: string;
+  copy_text?: {
+    text: string;
+  };
 };
 
 export type InlineKeyboard = InlineButton[][];
@@ -84,6 +87,30 @@ export async function sendTelegramMessage(
       inline_keyboard: keyboard,
     },
   });
+}
+
+export async function sendTelegramMessageRemovingLegacyKeyboard(
+  chatId: number,
+  text: string,
+  keyboard: InlineKeyboard,
+  entities?: TelegramMessageEntity[],
+): Promise<TelegramMessage> {
+  const message = await telegramRequest<TelegramMessage>("sendMessage", {
+    chat_id: chatId,
+    text,
+    ...(entities?.length ? { entities } : {}),
+    reply_markup: {
+      remove_keyboard: true,
+    },
+  });
+
+  return editTelegramMessage(
+    chatId,
+    message.message_id,
+    text,
+    keyboard,
+    entities,
+  );
 }
 
 export async function editTelegramMessage(
