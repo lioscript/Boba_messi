@@ -95,22 +95,17 @@ export async function sendTelegramMessageRemovingLegacyKeyboard(
   keyboard: InlineKeyboard,
   entities?: TelegramMessageEntity[],
 ): Promise<TelegramMessage> {
-  const message = await telegramRequest<TelegramMessage>("sendMessage", {
+  // Send the inline keyboard with the initial message. Sending a message with
+  // ReplyKeyboardRemove and editing it immediately afterwards can leave the
+  // language buttons missing in Telegram clients.
+  return telegramRequest<TelegramMessage>("sendMessage", {
     chat_id: chatId,
     text,
     ...(entities?.length ? { entities } : {}),
     reply_markup: {
-      remove_keyboard: true,
+      inline_keyboard: keyboard,
     },
   });
-
-  return editTelegramMessage(
-    chatId,
-    message.message_id,
-    text,
-    keyboard,
-    entities,
-  );
 }
 
 export async function editTelegramMessage(

@@ -1,0 +1,1 @@
+- [Telegram inline keyboards](telegram-inline-keyboards.md) — send the first inline keyboard with the initial message instead of editing after ReplyKeyboardRemove.
