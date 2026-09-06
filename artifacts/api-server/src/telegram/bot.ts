@@ -305,6 +305,20 @@ async function handleMessage(message: TelegramMessage): Promise<void> {
     username: from.username,
     firstName: from.first_name,
   });
+
+  const customEmojiIds = (message.entities ?? [])
+    .filter((entity) => entity.type === "custom_emoji")
+    .map((entity) => entity.custom_emoji_id)
+    .filter((customEmojiId): customEmojiId is string => Boolean(customEmojiId));
+  if (customEmojiIds.length > 0) {
+    await sendTelegramMessage(
+      message.chat.id,
+      `Custom Emoji ID:\n${customEmojiIds.join("\n")}\n\nСкопіюй потрібний ID і надішли його мені.`,
+      [[button("↩️  Назад", ACTION.main)]],
+    );
+    return;
+  }
+
   if (text === "/start") {
     await sendStart(message);
     return;

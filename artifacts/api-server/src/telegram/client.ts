@@ -21,6 +21,7 @@ export type TelegramMessage = {
   chat: { id: number };
   from?: TelegramUser;
   text?: string;
+  entities?: TelegramMessageEntity[];
   date: number;
 };
 
