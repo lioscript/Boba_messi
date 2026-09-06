@@ -34,6 +34,29 @@ export type RichTextPart = {
   emojiKey?: CustomEmojiKey;
 };
 
+const fallbackByKey: Record<CustomEmojiKey, string> = {
+  brand: "🌿",
+  welcome: "🌿",
+  activation: "✅",
+  vip: "🔒",
+  support247: "⚡",
+  chooseSection: "👇",
+  products: "💎",
+  profile: "👤",
+  keys: "🔐",
+  reviews: "⭐",
+  referrals: "💎",
+  support: "📞",
+  language: "🌙",
+  productHeading: "💎",
+  oxide: "💎",
+  platformIos: "🔒",
+  platformAndroid: "🤖",
+  choosePlan: "⚡",
+  payment: "💳",
+  success: "✅",
+};
+
 function getCustomEmojiMap(): CustomEmojiMap {
   const raw = process.env["TELEGRAM_CUSTOM_EMOJI_IDS"];
   if (!raw) return {};
@@ -58,7 +81,7 @@ export function composeRichText(parts: RichTextPart[]): RichText {
       : undefined;
 
     if (customEmojiId) {
-      const fallback = "✦";
+      const fallback = fallbackByKey[part.emojiKey!];
       entities.push({
         type: "custom_emoji",
         offset: text.length,
