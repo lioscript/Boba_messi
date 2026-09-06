@@ -2,7 +2,9 @@ export type BotLanguage = "ru" | "en";
 
 type Copy = {
   welcome: (firstName: string) => string;
-  welcomeDetails: string;
+  activation: string;
+  vipAccess: string;
+  support247: string;
   chooseSection: string;
   products: string;
   profile: string;
@@ -12,13 +14,18 @@ type Copy = {
   referrals: string;
   support: string;
   language: string;
-  chooseProduct: string;
+  productHeading: string;
+  productDescription: string;
   oxiDe: string;
+  oxideTitle: string;
   back: string;
-  choosePlatform: string;
+  platformPrompt: string;
   ios: string;
   androidSoon: string;
-  choosePlan: string;
+  planTitle: string;
+  planPrompt: string;
+  planFeatures: string;
+  paymentPending: string;
   planDetails: string;
   unavailable: string;
   outOfStock: string;
@@ -39,8 +46,9 @@ type Copy = {
 const copies: Record<BotLanguage, Copy> = {
   ru: {
     welcome: (firstName) => `Добро пожаловать, ${firstName}!`,
-    welcomeDetails:
-      "✓ Мгновенная активация после оплаты\n🔒 Доступ к приватному VIP-разделу\n⚡ Поддержка 24/7",
+    activation: "Мгновенная активация после оплаты",
+    vipAccess: "Доступ к приватному VIP-разделу",
+    support247: "Поддержка 24/7",
     chooseSection: "Выберите раздел ниже",
     products: "💎  Продукты",
     profile: "👤  Профиль",
@@ -50,14 +58,19 @@ const copies: Record<BotLanguage, Copy> = {
     referrals: "💎  Рефералы",
     support: "☎️  Поддержка",
     language: "🌙  Язык / Language",
-    chooseProduct: "💎 ПРОДУКТЫ\n\nВыберите продукт, чтобы увидеть доступные тарифы.",
+    productHeading: "ПРОДУКТЫ",
+    productDescription: "Выберите продукт, чтобы увидеть доступные тарифы.",
     oxiDe: "💎  OXIDE",
+    oxideTitle: "OXIDE",
     back: "↩️  Назад",
-    choosePlatform: "💎 OXIDE\n\n⚡ Выберите платформу:",
+    platformPrompt: "Выберите платформу:",
     ios: "🔒  iOS",
     androidSoon: "ⓘ  Android — скоро",
-    choosePlan:
-      "💎 OXIDE iOS\n\n⚡ Выберите тариф.\n\n✓ Функции:\n— Aim · Silent aim\n— Player ESP · Animal ESP\n— Resource ESP (ore)\n— Loot box & cupboard ESP\n— Day/night switch · NoClip\n\n💳 Оплата будет доступна после добавления товара.",
+    planTitle: "OXIDE iOS",
+    planPrompt: "Выберите тариф.",
+    planFeatures:
+      "Функции:\n— Aim · Silent aim\n— Player ESP · Animal ESP\n— Resource ESP (ore)\n— Loot box & cupboard ESP\n— Day/night switch · NoClip",
+    paymentPending: "Оплата будет доступна после добавления товара.",
     planDetails: "OXIDE iOS",
     unavailable: "Сейчас ничего нет в наличии.\n\nМы добавим тарифы, как только товар будет готов.",
     outOfStock: "нет в наличии",
@@ -69,8 +82,9 @@ const copies: Record<BotLanguage, Copy> = {
   },
   en: {
     welcome: (firstName) => `Welcome, ${firstName}!`,
-    welcomeDetails:
-      "✓ Instant activation after payment\n🔒 Private VIP section access\n⚡ 24/7 Support",
+    activation: "Instant activation after payment",
+    vipAccess: "Private VIP section access",
+    support247: "24/7 Support",
     chooseSection: "Select a section below",
     products: "💎  Products",
     profile: "👤  Profile",
@@ -80,14 +94,19 @@ const copies: Record<BotLanguage, Copy> = {
     referrals: "💎  Referrals",
     support: "☎️  Support",
     language: "🌙  Язык / Language",
-    chooseProduct: "💎 PRODUCTS\n\nSelect a product to view available plans.",
+    productHeading: "PRODUCTS",
+    productDescription: "Select a product to view available plans.",
     oxiDe: "💎  OXIDE",
+    oxideTitle: "OXIDE",
     back: "↩️  Back",
-    choosePlatform: "💎 OXIDE\n\n⚡ Choose your platform:",
+    platformPrompt: "Choose your platform:",
     ios: "🔒  iOS",
     androidSoon: "ⓘ  Android — soon",
-    choosePlan:
-      "💎 OXIDE iOS\n\n⚡ Choose a plan.\n\n✓ Features:\n— Aim · Silent aim\n— Player ESP · Animal ESP\n— Resource ESP (ore)\n— Loot box & cupboard ESP\n— Day/night switch · NoClip\n\n💳 Payment will be enabled after products are added.",
+    planTitle: "OXIDE iOS",
+    planPrompt: "Choose a plan.",
+    planFeatures:
+      "Features:\n— Aim · Silent aim\n— Player ESP · Animal ESP\n— Resource ESP (ore)\n— Loot box & cupboard ESP\n— Day/night switch · NoClip",
+    paymentPending: "Payment will be enabled after products are added.",
     planDetails: "OXIDE iOS",
     unavailable: "Nothing is available right now.\n\nPlans will appear here as soon as the product is ready.",
     outOfStock: "out of stock",

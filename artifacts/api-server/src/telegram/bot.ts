@@ -3,14 +3,17 @@ import {
   answerTelegramCallback,
   editTelegramMessage,
   sendTelegramMessage,
-  sendTelegramMessageRemovingLegacyKeyboard,
   telegramRequest,
   type InlineKeyboard,
   type TelegramCallbackQuery,
   type TelegramMessage,
   type TelegramUpdate,
 } from "./client";
-import { withCustomEmoji } from "./custom-emoji";
+import {
+  composeRichText,
+  withCustomEmoji,
+  type RichTextPart,
+} from "./custom-emoji";
 import { getCopy, isBotLanguage, type BotLanguage } from "./i18n";
 import {
   ensureTelegramUser,
@@ -120,6 +123,73 @@ function unavailableKeyboard(copy: ReturnType<typeof getCopy>): InlineKeyboard {
   return [[button(copy.back, ACTION.main)]];
 }
 
+function withoutMenuIcon(label: string): string {
+  return label.replace(/^[^\p{L}\p{N}]*/u, "").trim();
+}
+
+function mainMessageParts(
+  copy: ReturnType<typeof getCopy>,
+  firstName: string,
+): RichTextPart[] {
+  return [
+    { text: copy.welcome(firstName), emojiKey: "welcome" },
+    { text: "\n\n" },
+    { text: copy.activation, emojiKey: "activation" },
+    { text: "\n" },
+    { text: copy.vipAccess, emojiKey: "vip" },
+    { text: "\n" },
+    { text: copy.support247, emojiKey: "support247" },
+    { text: "\n\n" },
+    { text: copy.chooseSection, emojiKey: "chooseSection" },
+    { text: "\n\n" },
+    { text: withoutMenuIcon(copy.products), emojiKey: "products" },
+    { text: "\n" },
+    { text: withoutMenuIcon(copy.profile), emojiKey: "profile" },
+    { text: "\n" },
+    { text: withoutMenuIcon(copy.myKeys), emojiKey: "keys" },
+    { text: "\n" },
+    { text: withoutMenuIcon(copy.reviews), emojiKey: "reviews" },
+    { text: "\n" },
+    { text: withoutMenuIcon(copy.referrals), emojiKey: "referrals" },
+    { text: "\n" },
+    { text: withoutMenuIcon(copy.support), emojiKey: "support" },
+    { text: "\n" },
+    { text: withoutMenuIcon(copy.language), emojiKey: "language" },
+  ];
+}
+
+function productMessageParts(
+  copy: ReturnType<typeof getCopy>,
+): RichTextPart[] {
+  return [
+    { text: copy.productHeading, emojiKey: "productHeading" },
+    { text: `\n\n${copy.productDescription}` },
+  ];
+}
+
+function platformMessageParts(
+  copy: ReturnType<typeof getCopy>,
+): RichTextPart[] {
+  return [
+    { text: copy.oxideTitle, emojiKey: "oxide" },
+    { text: "\n\n" },
+    { text: withoutMenuIcon(copy.ios), emojiKey: "platformIos" },
+    { text: "\n" },
+    { text: withoutMenuIcon(copy.androidSoon), emojiKey: "platformAndroid" },
+    { text: `\n\n${copy.platformPrompt}` },
+  ];
+}
+
+function planMessageParts(copy: ReturnType<typeof getCopy>): RichTextPart[] {
+  return [
+    { text: copy.planTitle, emojiKey: "oxide" },
+    { text: "\n\n" },
+    { text: copy.planPrompt, emojiKey: "choosePlan" },
+    { text: `\n\n${copy.planFeatures}\n\n` },
+    { text: copy.paymentPending, emojiKey: "payment" },
+  ];
+}
+
 function languageFromUser(
   user: Awaited<ReturnType<typeof ensureTelegramUser>>,
 ): BotLanguage {
@@ -153,6 +223,31 @@ async function editRichMessage(
   );
 }
 
+async function sendComposedMessage(
+  chatId: number,
+  parts: RichTextPart[],
+  keyboard: InlineKeyboard,
+): Promise<void> {
+  const richText = composeRichText(parts);
+  await sendTelegramMessage(chatId, richText.text, keyboard, richText.entities);
+}
+
+async function editComposedMessage(
+  callback: TelegramCallbackQuery,
+  parts: RichTextPart[],
+  keyboard: InlineKeyboard,
+): Promise<void> {
+  if (!callback.message) return;
+  const richText = composeRichText(parts);
+  await editTelegramMessage(
+    callback.message.chat.id,
+    callback.message.message_id,
+    richText.text,
+    keyboard,
+    richText.entities,
+  );
+}
+
 async function sendStart(message: TelegramMessage): Promise<void> {
   const from = message.from;
   if (!from) return;
@@ -161,15 +256,15 @@ async function sendStart(message: TelegramMessage): Promise<void> {
     username: from.username,
     firstName: from.first_name,
   });
-  const richText = withCustomEmoji(
-    "🌿 Добро пожаловать в OXIDE STORE!\n\nChoose your language / Выберите язык",
-    "brand",
-  );
-  await sendTelegramMessageRemovingLegacyKeyboard(
+  await sendComposedMessage(
     message.chat.id,
-    richText.text,
+    [
+      {
+        text: "🌿 Добро пожаловать в OXIDE STORE!\n\nChoose your language / Выберите язык",
+        emojiKey: "welcome",
+      },
+    ],
     languageKeyboard(),
-    richText.entities,
   );
 }
 
@@ -185,11 +280,18 @@ async function renderMain(
     firstName: from.first_name,
   });
   const copy = getCopy(language);
-  const text = `${copy.welcome(user.firstName)}\n\n${copy.welcomeDetails}\n\n${copy.chooseSection}`;
   if (callback) {
-    await editRichMessage(callback, text, mainKeyboard(copy), "welcome");
+    await editComposedMessage(
+      callback,
+      mainMessageParts(copy, user.firstName),
+      mainKeyboard(copy),
+    );
   } else {
-    await sendRichMessage(chatId, text, mainKeyboard(copy), "welcome");
+    await sendComposedMessage(
+      chatId,
+      mainMessageParts(copy, user.firstName),
+      mainKeyboard(copy),
+    );
   }
 }
 
@@ -223,27 +325,24 @@ async function handleCallback(callback: TelegramCallbackQuery): Promise<void> {
       await renderMain(message.chat.id, callback.from, language, callback);
       return;
     case ACTION.products:
-      await editRichMessage(
+      await editComposedMessage(
         callback,
-        copy.chooseProduct,
+        productMessageParts(copy),
         productKeyboard(copy),
-        "products",
       );
       return;
     case ACTION.oxide:
-      await editRichMessage(
+      await editComposedMessage(
         callback,
-        copy.choosePlatform,
+        platformMessageParts(copy),
         platformKeyboard(copy),
-        "products",
       );
       return;
     case ACTION.platformIos:
-      await editRichMessage(
+      await editComposedMessage(
         callback,
-        copy.choosePlan,
+        planMessageParts(copy),
         planKeyboard(copy),
-        "products",
       );
       return;
     case ACTION.platformAndroid:

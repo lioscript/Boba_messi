@@ -3,10 +3,23 @@ import type { TelegramMessageEntity } from "./client";
 type CustomEmojiKey =
   | "brand"
   | "welcome"
+  | "activation"
+  | "vip"
+  | "support247"
+  | "chooseSection"
   | "products"
   | "profile"
   | "keys"
+  | "reviews"
+  | "referrals"
+  | "support"
   | "language"
+  | "productHeading"
+  | "oxide"
+  | "platformIos"
+  | "platformAndroid"
+  | "choosePlan"
+  | "payment"
   | "success";
 
 type CustomEmojiMap = Partial<Record<CustomEmojiKey, string>>;
@@ -14,6 +27,11 @@ type CustomEmojiMap = Partial<Record<CustomEmojiKey, string>>;
 type RichText = {
   text: string;
   entities?: TelegramMessageEntity[];
+};
+
+export type RichTextPart = {
+  text: string;
+  emojiKey?: CustomEmojiKey;
 };
 
 function getCustomEmojiMap(): CustomEmojiMap {
@@ -29,23 +47,39 @@ function getCustomEmojiMap(): CustomEmojiMap {
   }
 }
 
+export function composeRichText(parts: RichTextPart[]): RichText {
+  const customEmojiMap = getCustomEmojiMap();
+  let text = "";
+  const entities: TelegramMessageEntity[] = [];
+
+  for (const part of parts) {
+    const customEmojiId = part.emojiKey
+      ? customEmojiMap[part.emojiKey]
+      : undefined;
+
+    if (customEmojiId) {
+      const fallback = "✦";
+      entities.push({
+        type: "custom_emoji",
+        offset: text.length,
+        length: fallback.length,
+        custom_emoji_id: customEmojiId,
+      });
+      text += `${fallback} `;
+    }
+
+    text += part.text;
+  }
+
+  return {
+    text,
+    ...(entities.length ? { entities } : {}),
+  };
+}
+
 export function withCustomEmoji(
   text: string,
   key: CustomEmojiKey,
-  fallback = "✦",
 ): RichText {
-  const customEmojiId = getCustomEmojiMap()[key];
-  if (!customEmojiId) return { text };
-
-  return {
-    text: `${fallback} ${text}`,
-    entities: [
-      {
-        type: "custom_emoji",
-        offset: 0,
-        length: fallback.length,
-        custom_emoji_id: customEmojiId,
-      },
-    ],
-  };
+  return composeRichText([{ text, emojiKey: key }]);
 }
