@@ -11,7 +11,9 @@ import {
 } from "./client";
 import {
   composeRichText,
+  getCustomEmojiId,
   withCustomEmoji,
+  type CustomEmojiKey,
   type RichTextPart,
 } from "./custom-emoji";
 import { getCopy, isBotLanguage, type BotLanguage } from "./i18n";
@@ -39,12 +41,29 @@ const ACTION = {
 let started = false;
 let offset = 0;
 
-function button(text: string, callbackData: string) {
-  return { text, callback_data: callbackData };
+function button(
+  text: string,
+  callbackData: string,
+  emojiKey?: CustomEmojiKey,
+) {
+  const iconCustomEmojiId = emojiKey
+    ? getCustomEmojiId(emojiKey)
+    : undefined;
+  return {
+    text,
+    callback_data: callbackData,
+    ...(iconCustomEmojiId
+      ? { icon_custom_emoji_id: iconCustomEmojiId }
+      : {}),
+  };
 }
 
 function copyButton(text: string, value: string) {
   return { text, copy_text: { text: value } };
+}
+
+function withoutMenuIcon(label: string): string {
+  return label.replace(/^[^\p{L}\p{N}]*/u, "").trim();
 }
 
 function languageKeyboard(): InlineKeyboard {
@@ -58,31 +77,31 @@ function languageKeyboard(): InlineKeyboard {
 
 function mainKeyboard(copy: ReturnType<typeof getCopy>): InlineKeyboard {
   return [
-    [button(copy.products, ACTION.products)],
+    [button(copy.products, ACTION.products, "products")],
     [
-      button(copy.profile, ACTION.profile),
-      button(copy.myKeys, ACTION.myKeys),
+      button(copy.profile, ACTION.profile, "profile"),
+      button(copy.myKeys, ACTION.myKeys, "keys"),
     ],
-    [button(copy.reviews, ACTION.unavailable)],
+    [button(copy.reviews, ACTION.unavailable, "reviews")],
     [
-      button(copy.referrals, ACTION.unavailable),
-      button(copy.support, ACTION.unavailable),
+      button(copy.referrals, ACTION.unavailable, "referrals"),
+      button(copy.support, ACTION.unavailable, "support"),
     ],
-    [button(copy.language, ACTION.language)],
+    [button(copy.language, ACTION.language, "language")],
   ];
 }
 
 function productKeyboard(copy: ReturnType<typeof getCopy>): InlineKeyboard {
   return [
-    [button(copy.oxiDe, ACTION.oxide)],
+    [button(copy.oxiDe, ACTION.oxide, "oxide")],
     [button(copy.back, ACTION.main)],
   ];
 }
 
 function platformKeyboard(copy: ReturnType<typeof getCopy>): InlineKeyboard {
   return [
-    [button(copy.ios, ACTION.platformIos)],
-    [button(copy.androidSoon, ACTION.platformAndroid)],
+    [button(copy.ios, ACTION.platformIos, "platformIos")],
+    [button(copy.androidSoon, ACTION.platformAndroid, "platformAndroid")],
     [button(copy.back, ACTION.products)],
   ];
 }
@@ -93,18 +112,21 @@ function planKeyboard(copy: ReturnType<typeof getCopy>): InlineKeyboard {
       button(
         `⚡ ${copy.planDetails} · 1 Day — ${copy.outOfStock}`,
         ACTION.unavailable,
+        "choosePlan",
       ),
     ],
     [
       button(
         `♡ ${copy.planDetails} · 7 Days — ${copy.outOfStock}`,
         ACTION.unavailable,
+        "choosePlan",
       ),
     ],
     [
       button(
         `☆ ${copy.planDetails} · 30 Days — ${copy.outOfStock}`,
         ACTION.unavailable,
+        "choosePlan",
       ),
     ],
     [button(copy.back, ACTION.oxide)],
@@ -123,10 +145,6 @@ function unavailableKeyboard(copy: ReturnType<typeof getCopy>): InlineKeyboard {
   return [[button(copy.back, ACTION.main)]];
 }
 
-function withoutMenuIcon(label: string): string {
-  return label.replace(/^[^\p{L}\p{N}]*/u, "").trim();
-}
-
 function mainMessageParts(
   copy: ReturnType<typeof getCopy>,
   firstName: string,
@@ -141,20 +159,6 @@ function mainMessageParts(
     { text: copy.support247, emojiKey: "support247" },
     { text: "\n\n" },
     { text: copy.chooseSection, emojiKey: "chooseSection" },
-    { text: "\n\n" },
-    { text: withoutMenuIcon(copy.products), emojiKey: "products" },
-    { text: "\n" },
-    { text: withoutMenuIcon(copy.profile), emojiKey: "profile" },
-    { text: "\n" },
-    { text: withoutMenuIcon(copy.myKeys), emojiKey: "keys" },
-    { text: "\n" },
-    { text: withoutMenuIcon(copy.reviews), emojiKey: "reviews" },
-    { text: "\n" },
-    { text: withoutMenuIcon(copy.referrals), emojiKey: "referrals" },
-    { text: "\n" },
-    { text: withoutMenuIcon(copy.support), emojiKey: "support" },
-    { text: "\n" },
-    { text: withoutMenuIcon(copy.language), emojiKey: "language" },
   ];
 }
 

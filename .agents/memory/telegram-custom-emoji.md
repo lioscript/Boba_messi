@@ -7,4 +7,4 @@ When sending a Telegram `custom_emoji` entity, the entity must cover a valid emo
 
 **Why:** The first multi-emoji implementation used a generic star placeholder and Telegram rejected the startup message.
 
-**How to apply:** Use a valid emoji placeholder for each custom-emoji placement and calculate offsets from JavaScript string lengths. Keep custom emoji entities in message text; inline button labels cannot carry message entities.
+**How to apply:** Use a valid emoji placeholder for each custom-emoji placement and calculate offsets from JavaScript string lengths. For inline buttons, use Telegram's `icon_custom_emoji_id` field rather than message entities.

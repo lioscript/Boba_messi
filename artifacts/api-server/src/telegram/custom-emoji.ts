@@ -1,6 +1,6 @@
 import type { TelegramMessageEntity } from "./client";
 
-type CustomEmojiKey =
+export type CustomEmojiKey =
   | "brand"
   | "welcome"
   | "activation"
@@ -68,6 +68,10 @@ function getCustomEmojiMap(): CustomEmojiMap {
   } catch {
     return {};
   }
+}
+
+export function getCustomEmojiId(key: CustomEmojiKey): string | undefined {
+  return getCustomEmojiMap()[key];
 }
 
 export function composeRichText(parts: RichTextPart[]): RichText {

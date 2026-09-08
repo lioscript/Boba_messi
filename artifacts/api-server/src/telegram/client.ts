@@ -48,6 +48,7 @@ export type TelegramCallbackQuery = {
 
 export type InlineButton = {
   text: string;
+  icon_custom_emoji_id?: string;
   callback_data?: string;
   copy_text?: {
     text: string;
