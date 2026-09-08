@@ -59,6 +59,23 @@ function button(
   };
 }
 
+function linkButton(
+  text: string,
+  url: string,
+  emojiKey?: CustomEmojiKey,
+) {
+  const iconCustomEmojiId = emojiKey
+    ? getCustomEmojiId(emojiKey)
+    : undefined;
+  return {
+    text: emojiKey ? withoutMenuIcon(text) : text,
+    url,
+    ...(iconCustomEmojiId
+      ? { icon_custom_emoji_id: iconCustomEmojiId }
+      : {}),
+  };
+}
+
 function copyButton(text: string, value: string) {
   return { text, copy_text: { text: value } };
 }
@@ -83,10 +100,16 @@ function mainKeyboard(copy: ReturnType<typeof getCopy>): InlineKeyboard {
       button(copy.profile, ACTION.profile, "profile"),
       button(copy.myKeys, ACTION.myKeys, "keys"),
     ],
-    [button(copy.reviews, ACTION.unavailable, "reviews")],
+    [
+      linkButton(
+        copy.reviews,
+        "https://t.me/AQREH_COMMUNITY",
+        "reviews",
+      ),
+    ],
     [
       button(copy.referrals, ACTION.unavailable, "referrals"),
-      button(copy.support, ACTION.unavailable, "support"),
+      linkButton(copy.support, "https://t.me/SKh_an", "support"),
     ],
     [button(copy.language, ACTION.language, "language")],
   ];
