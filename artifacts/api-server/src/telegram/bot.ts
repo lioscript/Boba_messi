@@ -90,7 +90,7 @@ const PLAN_OPTIONS: Array<{
 }> = [
   { duration: "1d", price: "4$" },
   { duration: "7d", price: "10$" },
-  { duration: "30d", price: "20€" },
+  { duration: "30d", price: "20$" },
 ];
 
 const PLAN_LABELS: Record<

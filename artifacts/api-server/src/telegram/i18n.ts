@@ -77,7 +77,7 @@ const copies: Record<BotLanguage, Copy> = {
     outOfStock: "нет в наличии",
     inStock: (count) => `${count} шт. в наличии`,
     profileDetails: ({ telegramId, firstName, username, language, registeredAt, purchasesCount, balanceRoubles }) =>
-      `👤 МОЙ ПРОФИЛЬ\n\nⓘ ID: ${telegramId}\n👤 Имя: ${firstName}${username ? `\n@${username}` : ""}\n🌙 Язык: ${language === "ru" ? "Русский" : "English"}\n📅 Регистрация: ${formatDate(registeredAt)}\n\n🗃 Покупки: ${purchasesCount}\n💳 Баланс: ${balanceRoubles} ₽\n\n🔒 Документы:\nПолитика конфиденциальности\nУсловия использования`,
+      `👤 МОЙ ПРОФИЛЬ\n\nⓘ ID: ${telegramId}\n👤 Имя: ${firstName}${username ? `\n@${username}` : ""}\n🌙 Язык: ${language === "ru" ? "Русский" : "English"}\n📅 Регистрация: ${formatDate(registeredAt)}\n\n🗃 Покупки: ${purchasesCount}\n💵 Баланс: ${balanceRoubles}$\n\n🔒 Документы:\nПолитика конфиденциальности\nУсловия использования`,
     emptyKeys: "🔐 МОИ КЛЮЧИ\n\nИстория покупок пока пуста.",
     unavailableSection: "Раздел временно недоступен.\n\nМы сообщим, когда он будет активирован.",
     languageChanged: "Язык изменён.",
@@ -114,7 +114,7 @@ const copies: Record<BotLanguage, Copy> = {
     outOfStock: "out of stock",
     inStock: (count) => `${count} in stock`,
     profileDetails: ({ telegramId, firstName, username, language, registeredAt, purchasesCount, balanceRoubles }) =>
-      `👤 MY PROFILE\n\nⓘ ID: ${telegramId}\n👤 Name: ${firstName}${username ? `\n@${username}` : ""}\n🌙 Language: ${language === "ru" ? "Русский" : "English"}\n📅 Registered: ${formatDate(registeredAt)}\n\n🗃 Purchases: ${purchasesCount}\n💳 Balance: ${balanceRoubles} ₽\n\n🔒 Documents:\nPrivacy Policy\nTerms of Service`,
+      `👤 MY PROFILE\n\nⓘ ID: ${telegramId}\n👤 Name: ${firstName}${username ? `\n@${username}` : ""}\n🌙 Language: ${language === "ru" ? "Русский" : "English"}\n📅 Registered: ${formatDate(registeredAt)}\n\n🗃 Purchases: ${purchasesCount}\n💵 Balance: ${balanceRoubles}$\n\n🔒 Documents:\nPrivacy Policy\nTerms of Service`,
     emptyKeys: "🔐 MY KEYS\n\nYour purchase history is empty for now.",
     unavailableSection: "This section is temporarily unavailable.\n\nWe will let you know when it is activated.",
     languageChanged: "Language changed.",
