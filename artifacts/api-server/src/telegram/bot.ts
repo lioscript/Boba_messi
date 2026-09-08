@@ -273,7 +273,8 @@ async function sendStart(message: TelegramMessage): Promise<void> {
     message.chat.id,
     [
       {
-        text: "AQREH\n\nChoose your language / Выберите язык",
+        text: "Добро пожаловать в AQREH SHOP!\n\nChoose your language / Выберите язык",
+        emojiKey: "welcome",
       },
     ],
     languageKeyboard(),
