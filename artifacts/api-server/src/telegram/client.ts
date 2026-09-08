@@ -22,8 +22,18 @@ export type TelegramMessage = {
   chat: { id: number };
   from?: TelegramUser;
   text?: string;
+  caption?: string;
+  photo?: TelegramPhotoSize[];
   entities?: TelegramMessageEntity[];
   date: number;
+};
+
+export type TelegramPhotoSize = {
+  file_id: string;
+  file_unique_id: string;
+  width: number;
+  height: number;
+  file_size?: number;
 };
 
 export type TelegramMessageEntity = {
@@ -89,9 +99,25 @@ export async function sendTelegramMessage(
     chat_id: chatId,
     text,
     ...(entities?.length ? { entities } : {}),
-    reply_markup: {
-      inline_keyboard: keyboard,
-    },
+    ...(keyboard.length
+      ? {
+          reply_markup: {
+            inline_keyboard: keyboard,
+          },
+        }
+      : {}),
+  });
+}
+
+export async function sendTelegramPhoto(
+  chatId: number,
+  photo: string,
+  caption?: string,
+): Promise<TelegramMessage> {
+  return telegramRequest<TelegramMessage>("sendPhoto", {
+    chat_id: chatId,
+    photo,
+    ...(caption ? { caption } : {}),
   });
 }
 

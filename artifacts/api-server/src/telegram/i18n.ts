@@ -29,6 +29,7 @@ type Copy = {
   planDetails: string;
   unavailable: string;
   outOfStock: string;
+  inStock: (count: number) => string;
   profileDetails: (user: {
     telegramId: string;
     firstName: string;
@@ -74,6 +75,7 @@ const copies: Record<BotLanguage, Copy> = {
     planDetails: "OXIDE iOS",
     unavailable: "Сейчас ничего нет в наличии.\n\nМы добавим тарифы, как только товар будет готов.",
     outOfStock: "нет в наличии",
+    inStock: (count) => `${count} шт. в наличии`,
     profileDetails: ({ telegramId, firstName, username, language, registeredAt, purchasesCount, balanceRoubles }) =>
       `👤 МОЙ ПРОФИЛЬ\n\nⓘ ID: ${telegramId}\n👤 Имя: ${firstName}${username ? `\n@${username}` : ""}\n🌙 Язык: ${language === "ru" ? "Русский" : "English"}\n📅 Регистрация: ${formatDate(registeredAt)}\n\n🗃 Покупки: ${purchasesCount}\n💳 Баланс: ${balanceRoubles} ₽\n\n🔒 Документы:\nПолитика конфиденциальности\nУсловия использования`,
     emptyKeys: "🔐 МОИ КЛЮЧИ\n\nИстория покупок пока пуста.",
@@ -110,6 +112,7 @@ const copies: Record<BotLanguage, Copy> = {
     planDetails: "OXIDE iOS",
     unavailable: "Nothing is available right now.\n\nPlans will appear here as soon as the product is ready.",
     outOfStock: "out of stock",
+    inStock: (count) => `${count} in stock`,
     profileDetails: ({ telegramId, firstName, username, language, registeredAt, purchasesCount, balanceRoubles }) =>
       `👤 MY PROFILE\n\nⓘ ID: ${telegramId}\n👤 Name: ${firstName}${username ? `\n@${username}` : ""}\n🌙 Language: ${language === "ru" ? "Русский" : "English"}\n📅 Registered: ${formatDate(registeredAt)}\n\n🗃 Purchases: ${purchasesCount}\n💳 Balance: ${balanceRoubles} ₽\n\n🔒 Documents:\nPrivacy Policy\nTerms of Service`,
     emptyKeys: "🔐 MY KEYS\n\nYour purchase history is empty for now.",

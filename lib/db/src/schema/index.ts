@@ -33,5 +33,17 @@ export const telegramPurchases = pgTable("telegram_purchases", {
     .defaultNow(),
 });
 
+export const telegramKeys = pgTable("telegram_keys", {
+  id: serial("id").primaryKey(),
+  game: text("game").notNull(),
+  platform: text("platform").notNull(),
+  duration: text("duration").notNull(),
+  keyValue: text("key_value").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 export type TelegramUser = typeof telegramUsers.$inferSelect;
 export type TelegramPurchase = typeof telegramPurchases.$inferSelect;
+export type TelegramKey = typeof telegramKeys.$inferSelect;
