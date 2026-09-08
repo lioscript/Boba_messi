@@ -1,4 +1,11 @@
-import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 
 export const telegramUsers = pgTable("telegram_users", {
   id: serial("id").primaryKey(),
@@ -6,6 +13,7 @@ export const telegramUsers = pgTable("telegram_users", {
   username: text("username"),
   firstName: text("first_name").notNull(),
   language: text("language").notNull().default("ru"),
+  languageSelected: boolean("language_selected").notNull().default(false),
   registeredAt: timestamp("registered_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

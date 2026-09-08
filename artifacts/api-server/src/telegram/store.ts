@@ -48,7 +48,7 @@ export async function setTelegramLanguage(
 ): Promise<TelegramUser> {
   const updated = await db
     .update(telegramUsers)
-    .set({ language })
+    .set({ language, languageSelected: true })
     .where(eq(telegramUsers.telegramId, telegramId))
     .returning();
   if (!updated[0]) {

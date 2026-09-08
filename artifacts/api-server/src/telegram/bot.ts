@@ -264,7 +264,7 @@ async function sendStart(message: TelegramMessage): Promise<void> {
     firstName: from.first_name,
   });
 
-  if (existingUser) {
+  if (existingUser?.languageSelected) {
     await renderMain(message.chat.id, from, languageFromUser(existingUser));
     return;
   }
@@ -273,8 +273,7 @@ async function sendStart(message: TelegramMessage): Promise<void> {
     message.chat.id,
     [
       {
-        text: "🌿 Добро пожаловать в OXIDE STORE!\n\nChoose your language / Выберите язык",
-        emojiKey: "welcome",
+        text: "AQREH\n\nChoose your language / Выберите язык",
       },
     ],
     languageKeyboard(),
@@ -420,12 +419,6 @@ async function handleMessage(message: TelegramMessage): Promise<void> {
   const text = message.text?.trim();
   const from = message.from;
   if (!text || !from) return;
-
-  await ensureTelegramUser({
-    telegramId: String(from.id),
-    username: from.username,
-    firstName: from.first_name,
-  });
 
   const customEmojiIds = (message.entities ?? [])
     .filter((entity) => entity.type === "custom_emoji")
