@@ -20,6 +20,7 @@ import { getCopy, isBotLanguage, type BotLanguage } from "./i18n";
 import {
   ensureTelegramUser,
   getTelegramPurchases,
+  getTelegramUser,
   setTelegramLanguage,
 } from "./store";
 
@@ -255,11 +256,19 @@ async function editComposedMessage(
 async function sendStart(message: TelegramMessage): Promise<void> {
   const from = message.from;
   if (!from) return;
+  const telegramId = String(from.id);
+  const existingUser = await getTelegramUser(telegramId);
   await ensureTelegramUser({
-    telegramId: String(from.id),
+    telegramId,
     username: from.username,
     firstName: from.first_name,
   });
+
+  if (existingUser) {
+    await renderMain(message.chat.id, from, languageFromUser(existingUser));
+    return;
+  }
+
   await sendComposedMessage(
     message.chat.id,
     [
