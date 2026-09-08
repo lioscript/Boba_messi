@@ -50,7 +50,7 @@ function button(
     ? getCustomEmojiId(emojiKey)
     : undefined;
   return {
-    text,
+    text: emojiKey ? withoutMenuIcon(text) : text,
     callback_data: callbackData,
     ...(iconCustomEmojiId
       ? { icon_custom_emoji_id: iconCustomEmojiId }
